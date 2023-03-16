@@ -68,12 +68,16 @@ class _AudioWaveformsState extends State<AudioWaveforms> {
         onHorizontalDragStart:
             widget.enableGesture ? _handleHorizontalDragStart : null,
         child: ClipPath(
-          clipper: WaveClipper(!widget.waveStyle.showDurationLabel
-              ? 0.0
-              : widget.waveStyle.extraClipperHeight ??
-                  (widget.waveStyle.durationLinesHeight +
-                      (widget.waveStyle.durationStyle.fontSize ??
-                          widget.waveStyle.durationLinesHeight))),
+          clipper: WaveClipper(
+            extraClipperHeight: !widget.waveStyle.showDurationLabel
+                ? 0.0
+                : widget.waveStyle.extraClipperHeight ??
+                    (widget.waveStyle.durationLinesHeight +
+                        (widget.waveStyle.durationStyle.fontSize ??
+                            widget.waveStyle.durationLinesHeight)),
+            waveWidth:
+                widget.waveStyle.waveThickness + widget.waveStyle.spacing,
+          ),
           child: RepaintBoundary(
             child: CustomPaint(
               size: widget.size,

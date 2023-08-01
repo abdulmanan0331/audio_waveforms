@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      title: 'Audio Waveforms',
+      title: 'voice recorder',
       debugShowCheckedModeBanner: false,
       home: Home(),
     );
@@ -29,6 +29,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  List<String> recordedAudioList = [];
   late final RecorderController recorderController;
 
   String? path;
@@ -85,17 +86,7 @@ class _HomeState extends State<Home> {
         elevation: 1,
         centerTitle: true,
         shadowColor: Colors.grey,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/images/logo.png',
-              scale: 1.5,
-            ),
-            const SizedBox(width: 10),
-            const Text('Simform'),
-          ],
-        ),
+        title: const Text('voice recorder'),
       ),
       body: isLoading
           ? const Center(
@@ -107,31 +98,32 @@ class _HomeState extends State<Home> {
                   const SizedBox(height: 20),
                   Expanded(
                     child: ListView.builder(
-                      itemCount: 4,
+                      itemCount: recordedAudioList.length,
                       itemBuilder: (_, index) {
                         return WaveBubble(
-                          index: index + 1,
-                          isSender: index.isOdd,
-                          width: MediaQuery.of(context).size.width / 2,
+                          path: recordedAudioList[
+                              index], // Use the recorded audio file path from the list
+                          isSender: true,
                           appDirectory: appDirectory,
                         );
                       },
                     ),
                   ),
-                  if (isRecordingCompleted)
-                    WaveBubble(
-                      path: path,
-                      isSender: true,
-                      appDirectory: appDirectory,
-                    ),
-                  if (musicFile != null)
-                    WaveBubble(
-                      path: musicFile,
-                      isSender: true,
-                      appDirectory: appDirectory,
-                    ),
+                  // if (isRecordingCompleted)
+                  //   WaveBubble(
+                  //     path: path,
+                  //     isSender: true,
+                  //     appDirectory: appDirectory,
+                  //   ),
+                  // if (musicFile != null)
+                  //   WaveBubble(
+                  //     path: musicFile,
+                  //     isSender: true,
+                  //     appDirectory: appDirectory,
+                  //   ),
                   SafeArea(
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         AnimatedSwitcher(
                           duration: const Duration(milliseconds: 200),
@@ -156,47 +148,47 @@ class _HomeState extends State<Home> {
                                       horizontal: 15),
                                 )
                               : Container(
-                                  width:
-                                      MediaQuery.of(context).size.width / 1.7,
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF1E1B26),
-                                    borderRadius: BorderRadius.circular(12.0),
+                                  // width:
+                                  //     MediaQuery.of(context).size.width / 1.7,
+                                  // height: 50,
+                                  // decoration: BoxDecoration(
+                                  //   color: const Color(0xFF1E1B26),
+                                  //   borderRadius: BorderRadius.circular(12.0),
+                                  // ),
+                                  // padding: const EdgeInsets.only(left: 18),
+                                  // margin: const EdgeInsets.symmetric(
+                                  //     horizontal: 15),
+                                  // child: TextField(
+                                  //   readOnly: true,
+                                  //   decoration: InputDecoration(
+                                  //     hintText: "Type Something...",
+                                  //     hintStyle: const TextStyle(
+                                  //         color: Colors.white54),
+                                  //     contentPadding:
+                                  //         const EdgeInsets.only(top: 16),
+                                  //     border: InputBorder.none,
+                                  //     suffixIcon: IconButton(
+                                  //       onPressed: _pickFile,
+                                  //       icon: Icon(Icons.adaptive.share),
+                                  //       color: Colors.white54,
+                                  //     ),
+                                  //   ),
+                                  // ),
                                   ),
-                                  padding: const EdgeInsets.only(left: 18),
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 15),
-                                  child: TextField(
-                                    readOnly: true,
-                                    decoration: InputDecoration(
-                                      hintText: "Type Something...",
-                                      hintStyle: const TextStyle(
-                                          color: Colors.white54),
-                                      contentPadding:
-                                          const EdgeInsets.only(top: 16),
-                                      border: InputBorder.none,
-                                      suffixIcon: IconButton(
-                                        onPressed: _pickFile,
-                                        icon: Icon(Icons.adaptive.share),
-                                        color: Colors.white54,
-                                      ),
-                                    ),
-                                  ),
-                                ),
                         ),
-                        IconButton(
-                          onPressed: _refreshWave,
-                          icon: Icon(
-                            isRecording ? Icons.refresh : Icons.send,
-                            color: Colors.white,
-                          ),
-                        ),
+                        // IconButton(
+                        //   onPressed: _refreshWave,
+                        //   icon: Icon(
+                        //     isRecording ? Icons.refresh : Icons.send,
+                        //     color: Colors.white,
+                        //   ),
+                        // ),
                         const SizedBox(width: 16),
                         IconButton(
                           onPressed: _startOrStopRecording,
                           icon: Icon(isRecording ? Icons.stop : Icons.mic),
                           color: Colors.white,
-                          iconSize: 28,
+                          iconSize: 78,
                         ),
                       ],
                     ),
@@ -216,6 +208,10 @@ class _HomeState extends State<Home> {
 
         if (path != null) {
           isRecordingCompleted = true;
+          setState(() {
+            recordedAudioList
+                .add(path); // Add the recorded audio path to the list
+          });
           debugPrint(path);
           debugPrint("Recorded file size: ${File(path).lengthSync()}");
         }
